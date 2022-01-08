@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # colcamos el nombre de las apps que hemos creado
     'projects.apps.ProjectsConfig',
     'users.apps.UsersConfig'
 ]
@@ -60,6 +61,7 @@ ROOT_URLCONF = 'devsearch.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # colcoamos la ruta donde estaran los templates importantes que usaremos en todo el proyecto
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
         ],
@@ -123,6 +125,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+# colocamos las rutas de donde estan nuestros archivos staticos,
+# donde esta el css js y las imagenes que vamos a guardar de los usuarios y proyectos
 STATIC_URL = 'static/'
 MEDIA_URL = '/images/'
 
