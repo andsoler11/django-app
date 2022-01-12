@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Project
-from .forms import ProjectForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+
+from .models import Project, Tag
+from .forms import ProjectForm
+from .utils import searchProjects
 
 # el objeto request trae la informacion que llega desde el front
 def projects(request):
-    # tomamos todos los projectos que estan en la base de datos
-    # aca hacemos referencia al modelo y sus conecciones many to many, one to many, etc
-    projects = Project.objects.all()
+     # llamamos a la funcion de search que creamos en el archivo utils.py
+    projects, search = searchProjects(request)
+
     # pasamos los proyectos al dict context para pasrlos al front
-    context = {'projects': projects}
+    context = {'projects': projects, 'search': search}
     # retornamos con el render de la vista html y su data del dict context
     return render(request, 'projects/projects.html', context)
 
