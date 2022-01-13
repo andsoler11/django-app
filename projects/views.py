@@ -14,7 +14,7 @@ def projects(request):
     projects, search = searchProjects(request)
     
     # llamamos a la funcion para la paginacion
-    custom_range, projects = paginateProjects(request, projects, 2)
+    custom_range, projects = paginateProjects(request, projects, 6)
 
     # pasamos los proyectos al dict context para pasrlos al front
     context = {'projects': projects, 'search': search, 'custom_range': custom_range}

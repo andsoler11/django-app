@@ -93,7 +93,7 @@ def profiles(request):
     profiles, search = searchProfiles(request)
 
     # llamamos a la funcion de paginacion
-    custom_range, profiles = paginateProfiles(request, profiles, 3)
+    custom_range, profiles = paginateProfiles(request, profiles, 6)
 
     # pasamos el contexto, con los perfiles que trae el filtro, 
     # y con el valor del search para que este en el formulario,

@@ -23,19 +23,4 @@
     </div>
 {% endif %}
 
-<script type="text/javascript">
-  // get search form and page links
-  let form = document.getElementById('search_form')
-  let pageLinks = document.getElementsByClassName('page-link')
-
-  // ensure form exists
-  if (form) {
-    for (i=0; pageLinks.length > i; i++){
-      pageLinks[i].addEventListener('click', (e) => {
-        e.preventDefault()
-        console.log('button click')
-      })
-    }
-  }
-</script>
 
