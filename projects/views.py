@@ -2,18 +2,22 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import Project, Tag
 from .forms import ProjectForm
-from .utils import searchProjects
+from .utils import searchProjects, paginateProjects
 
 # el objeto request trae la informacion que llega desde el front
 def projects(request):
      # llamamos a la funcion de search que creamos en el archivo utils.py
     projects, search = searchProjects(request)
+    
+    # llamamos a la funcion para la paginacion
+    custom_range, projects = paginateProjects(request, projects, 2)
 
     # pasamos los proyectos al dict context para pasrlos al front
-    context = {'projects': projects, 'search': search}
+    context = {'projects': projects, 'search': search, 'custom_range': custom_range}
     # retornamos con el render de la vista html y su data del dict context
     return render(request, 'projects/projects.html', context)
 

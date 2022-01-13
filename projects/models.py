@@ -24,7 +24,7 @@ class Project(models.Model):
     featured_image = models.ImageField(null=True, blank=True, default="default.jpg")
     demo_link = models.CharField(max_length=2000, null=True, blank=True)
     source_link = models.CharField(max_length=2000, null=True, blank=True)
-    # aca cikicanis un Many to Many ya que muchos proyectos pueden tener muchos tags distintos, colocamos el nombre Tag para 
+    # aca colocamos un Many to Many ya que muchos proyectos pueden tener muchos tags distintos, colocamos el nombre Tag para 
     # hacer referencia a la clase que esta asociado (la clase esta mas abajo de este archivo)
     tags = models.ManyToManyField('Tag', blank=True)
     vote_total = models.IntegerField(default=0, null=True, blank=True)
@@ -37,6 +37,12 @@ class Project(models.Model):
     # aca es para que cuando imprimamos el proyecto, salga el titulo del proyecto
     def __str__(self):
         return self.title
+
+    # class meta para modificar los ajustes por defecto
+    class Meta:
+        # cambiar el orden en que se muestran los proyectos
+        # se coloca el "-" para colocarlo en forma Desc sin el - seria Asc
+        ordering = ['-created']
 
 # hacemos el modelo de review
 class Review(models.Model):

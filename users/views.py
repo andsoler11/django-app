@@ -8,7 +8,7 @@ from django.db.models import Q
 from projects.views import projects
 from .models import Profile, Skill
 from .forms import CustomUserCreationForm, ProfileForm, SkillForm
-from .utils import searchProfiles
+from .utils import searchProfiles, paginateProfiles
 # Create your views here.
 
 # empezamos con la vista del usuario al logearse
@@ -92,10 +92,14 @@ def profiles(request):
     # llamamos a la funcion de search que creamos en el archivo utils.py
     profiles, search = searchProfiles(request)
 
+    # llamamos a la funcion de paginacion
+    custom_range, profiles = paginateProfiles(request, profiles, 3)
+
     # pasamos el contexto, con los perfiles que trae el filtro, 
     # y con el valor del search para que este en el formulario,
     # asi el usuario sabe que fue lo que busco
-    context = {'profiles': profiles, 'search': search}
+    context = {'profiles': profiles, 'search': search, 'custom_range': custom_range}
+
     return render(request, 'users/profiles.html', context)
 
 
