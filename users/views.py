@@ -23,7 +23,7 @@ def loginUser(request):
     # si el request nos trae una peticion POSt esto es por que el usuario se esta logeando
     if request.method == 'POST':
         # colocamos los campos en variables
-        username = request.POST['username']
+        username = request.POST['username'].lower()
         password = request.POST['password']
         # traemos el usuario de la BD (esto usando el modelo User creado en models.py)
         try:
@@ -36,7 +36,7 @@ def loginUser(request):
         # si el usuario y contrasenia es correcto entonces logeamos al usuario y redireccionamos
         if user is not None:
             login(request, user)
-            return redirect('profiles')
+            return redirect(request.GET['next'] if 'next' in request.GET else 'account')
         else:
             # si estan mal, entonces mostramos error
             messages.error(request, 'username or password is incorrect')

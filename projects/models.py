@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from django.db.models.base import Model
 import uuid
@@ -42,7 +43,33 @@ class Project(models.Model):
     class Meta:
         # cambiar el orden en que se muestran los proyectos
         # se coloca el "-" para colocarlo en forma Desc sin el - seria Asc
-        ordering = ['-created']
+        ordering = ['-vote_ratio',  '-vote_total', 'title']
+
+    # traemos los usuarios que han colocado una review
+    @property
+    def reviewers(self):
+        # creamos una lista con los owners de los reviews
+        # usamos flat true para crear una lista y no un objeto
+        queryset = self.review_set.all().values_list('owner__id', flat=True)
+        return queryset
+
+    # con el @property vamos a usar esta funcion como un atributo de la clase
+    @property
+    def getVoteCount(self):
+        # traemos todas las reviews que tiene el projecto
+        reviews = self.review_set.all()
+        # contamos cuantos votos buenos tiene
+        up_votes = reviews.filter(value='up').count()
+        # contamos todos los votos que tiene
+        total_votes = reviews.count()
+        # sacamos el ratio para saber que porcentaje de aprovacion tiene
+        ratio = (up_votes / total_votes) * 100
+        # seteamos los nuevos numeros en las variables de los reviews y guardamos en la BD
+        self.vote_total = total_votes
+        self.vote_ratio = ratio
+        self.save()
+
+
 
 # hacemos el modelo de review
 class Review(models.Model):
@@ -52,7 +79,7 @@ class Review(models.Model):
         ('down', 'Down Vote'),
     )
 
-    # owner = 
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     # colocamos el foreign Key ya que las reviews estaran asociadas el proyecto que le daremos el review
     # en ondelete cascade significa que si se borra el proyecto, las reviews tambien se borraran
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -61,6 +88,11 @@ class Review(models.Model):
     value = models.CharField(max_length=255, choices=VOTE_TYPE)
     created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+
+    # modificamos el meta para colocar los fields que van a ser unicos
+    # aca solo puede tener 1 review por owner para cada proyecto
+    class Meta:
+        unique_together = [['owner',  'project']]
 
     # aca para cuando imprimamos pues salgan cuantos votos tiene el proyecto
     def __str__(self):

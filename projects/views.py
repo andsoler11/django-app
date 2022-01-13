@@ -3,9 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib import messages
 
 from .models import Project, Tag
-from .forms import ProjectForm
+from .forms import ProjectForm, ReviewForm
 from .utils import searchProjects, paginateProjects
 
 # el objeto request trae la informacion que llega desde el front
@@ -26,8 +27,26 @@ def projects(request):
 def project(request, pk):
     # filtramos para solo mostrar 1 proyecto y su informacion
     projectObj = Project.objects.get(id=pk)
+    # llamamos el formulario de reviews
+    form = ReviewForm()
+
+    # si el usuario agrego una nueva review entramos aca, para guardar el formulario que envio
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        review = form.save(commit=False)
+        review.project = projectObj
+        review.owner = request.user.profile
+        review.save()
+
+        
+        # actualizamos el conteo de votos del proyecto
+        # llamamos la function (property) que tenemos en los modelos de project
+        projectObj.getVoteCount
+        messages.success(request, 'Your review was successfully submited')
+        return redirect('project', pk=projectObj.id)
+
     # devolvemos el render de la vista html, junto con la informacion del proyecto 
-    return render(request, 'projects/single-project.html', {'project': projectObj})
+    return render(request, 'projects/single-project.html', {'project': projectObj, 'form': form})
 
 
 # con este decorador hacemos que el usuario tiene que estar contectado para poder ver la vista
